@@ -78,6 +78,7 @@ void drawPlayer()
 {
     for(int i=0; i<2; i++)
     {
+        players[i].setvisible();
         players[i].draw();
     }
 
@@ -104,6 +105,8 @@ void  drawgameover(int time,int i)
     if(temp<0)
     {
         temp=0;
+    }else if(temp>100){
+        temp=100;
     }
     drawtext("performance:"+std::to_string(temp), SCREEN_WIDTH/2, SCREEN_HEIGHT/2+60);
 }
@@ -175,12 +178,12 @@ void deal(int &count)
     //bullets
     if(keyboard[KEY_SPACE] and count%6==0 and players[0].alive())
     {
-        bullets_player[0].push_back(bullet(players[0].pos.x,players[0].pos.y,0)) ;
+        bullets_player[0].push_back(bullet(players[0],0)) ;
         playmusic(soundbullet);
     }
     if(keyboard['q'] and count%6==1 and players[1].alive())
     {
-        bullets_player[1].push_back(bullet(players[1].pos.x,players[1].pos.y,0));
+        bullets_player[1].push_back(bullet(players[1],0));
         playmusic(soundbullet);
     }
     //launch super weapon
@@ -189,7 +192,7 @@ void deal(int &count)
         players[0].score+=10*enemies.size();
         for(int i=0; i<enemies.size(); i++)
         {
-            explosions.push_back(explosion(enemies[i].pos));
+            explosions.push_back(explosion(enemies[i]));
         }
         bullets_enemy.clear();
         enemies.clear();
@@ -202,7 +205,7 @@ void deal(int &count)
         players[1].score+=10*enemies.size();
         for(int i=0; i<enemies.size(); i++)
         {
-            explosions.push_back(explosion(enemies[i].pos));
+            explosions.push_back(explosion(enemies[i]));
         }
         bullets_enemy.clear();
         enemies.clear();
@@ -219,7 +222,7 @@ void deal(int &count)
     {
         for(int i=0; i<enemies.size(); i++)
         {
-            bullets_enemy.push_back(bullet(enemies[i].pos.x,enemies[i].pos.y,1));
+            bullets_enemy.push_back(bullet(enemies[i],1));
         }
     }
     //Calculate new position of all sprites
@@ -249,7 +252,7 @@ void deal(int &count)
             {
                 if(collide(enemies[i],bullets_player[k][j]))
                 {
-                    explosions.push_back(explosion(enemies[i].pos));
+                    explosions.push_back(explosion(enemies[i]));
                     enemies[i].life--;
 
                     bullets_player[k].erase(bullets_player[k].begin()+j);
@@ -273,7 +276,7 @@ void deal(int &count)
         {
             if(collide(enemies[i],players[k]) and !players[k].reborn and players[k].alive())
             {
-                explosions.push_back(explosion(enemies[i].pos));
+                explosions.push_back(explosion(enemies[i]));
 
                 enemies.erase(enemies.begin()+i);
                 players[k].life--;
@@ -293,7 +296,7 @@ void deal(int &count)
         {
             if(collide2(bullets_enemy[i],players[k]) and !players[k].reborn and players[k].alive())
             {
-                explosions.push_back(explosion(players[k].pos));
+                explosions.push_back(explosion(players[k]));
 
                 bullets_enemy.erase(bullets_enemy.begin()+i);
                 players[k].life--;
@@ -316,7 +319,7 @@ void deal(int &count)
         if(!explosions[i].alive())
         {
 
-            explosions.erase(explosions.begin()+i);
+            explosions .erase(explosions.begin()+i);
             i--;
         }
     }
@@ -324,7 +327,6 @@ void deal(int &count)
     {
         if(enemies[i].pos.y>=SCREEN_HEIGHT)
         {
-
             enemies.erase(enemies.begin()+i);
             i--;
         }
@@ -335,7 +337,6 @@ void deal(int &count)
         {
             if(bullets_player[k][i].pos.y<=0)
             {
-
                 bullets_player[k].erase(bullets_player[k].begin()+i);
                 i--;
             }

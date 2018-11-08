@@ -345,16 +345,12 @@
 1508698640 c:\users\jinho\documents\lightning\pointd.h
 	<cmath>
 
-1540373820 c:\users\jinho\documents\lightning\sdl2_header.h
+1540644464 c:\users\jinho\documents\lightning\sdl2_header.h
 	<SDL2/SDL.h>
 	<SDL2/SDL_ttf.h>
 	<SDL2/SDL_image.h>
 	<SDL2/SDL_mixer.h>
-	<iostream>
-	<cstdio>
-	<cmath>
-	<algorithm>
-	<string>
+	<bits/stdc++.h>
 	"cleanup.h"
 	"res_path.h"
 	"pointd.h"
@@ -374,14 +370,14 @@
 	<utility>
 	<SDL2/SDL.h>
 
-1540543863 source:c:\users\jinho\documents\lightning\main.cpp
+1540645963 source:c:\users\jinho\documents\lightning\main.cpp
 	"SDL2_header.h"
 	"sprite_t.h"
 
 1539962717 source:c:\users\jinho\documents\lightning\sprite_t.cpp
 	"sprite_t.h"
 
-1540552913 c:\users\jinho\documents\lightning\sprite_t.h
+1540801479 c:\users\jinho\documents\lightning\sprite_t.h
 	<bits/stdc++.h>
 	"pointd.h"
 	"SDL2_header.h"

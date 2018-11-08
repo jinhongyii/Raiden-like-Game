@@ -14,16 +14,22 @@ Mix_Music* sound;
 const std::string RES_PATH_MUS	= getResourcePath("sound");
 Image *imagePlayer[2], *imagebullet_player, *imageEnemy,*imageexplosion,*imagebullet_enemy ;
 //detect collide between bullet_player and enemy,player and enemy
-template<class T1,class T2>
+/*template<class T1,class T2>
+
 bool collide(T1 a,T2 b)
 {
     return (a.pos.x>=b.pos.x-a.crashing_width and a.pos.x<=b.pos.x+b.crashing_width and a.pos.y>=b.pos.y-a.crashing_length and a.pos.y<=b.pos.y+b.crashing_length );
+}*/
+template<class T1,class T2>
+bool collide(T1 a,T2 b)
+{
+    return (fabs(a.pos.x-b.pos.x)<=(a.crashing_width+b.crashing_width)/2 and fabs(a.pos.y-b.pos.y)<=(a.crashing_length+b.crashing_length)/2);
 }
 //detect collide between bullet_enemy and player
 template<class T1,class T2>
 bool collide2(T1 a,T2 b)
 {
-    return (a.pos.x>=b.pos.x-a.width and a.pos.x<=b.pos.x+b.width and a.pos.y>=b.pos.y-a.length and a.pos.y<=b.pos.y+b.length );
+    return (fabs(a.pos.x-b.pos.x)<=(a.width+b.width)/2 and fabs(a.pos.y-b.pos.y)<=(a.length+b.length)/2);
 }
 void keyDown()
 {
@@ -57,7 +63,7 @@ Mix_Chunk* loadmusic(const char* a )
 }
 void playmusic(Mix_Chunk* music)
 {
-    int channel = Mix_PlayChannel( -1, music, 0 );
+    Mix_PlayChannel( -1, music, 0 );
 }
 class sprite_t
 {
@@ -76,18 +82,19 @@ public:
     {
         return life>0;
     }
-
     Image* image;
-
+    void draw()
+    {
+        Game::drawImage( image, pos.x-crashing_width/2,pos.y-crashing_length/2 );
+    }
 } ;
 //the position where the bullet is added
 class fire
 {
 public:
-    fire(const int &a,const int &b)
+    fire(const PointD &b)
     {
-        pos.x=a;
-        pos.y=b;
+        pos=b;
     }
     PointD pos;
 };
@@ -101,7 +108,7 @@ public:
         length=2;
         reborn=false;
         pos=PointD(Game::SCREEN_WIDTH/2,Game::SCREEN_HEIGHT/2 );
-        shootings.push_back(fire(pos.x,pos.y));
+        shootings.push_back(fire(pos));
         score=0;
         life=5;
         speed = 5;
@@ -109,7 +116,6 @@ public:
         cooling_down=0;
         image=imagePlayer[a];
         Game::getImageSize(image,crashing_width,crashing_length);
-
     }
     std::vector<fire> shootings;
     int score;
@@ -121,8 +127,7 @@ public:
     int superweapons;
     //the cooling down time of superweapon
     int cooling_down;
-    void draw()
-    {
+    void setvisible(){
         if(alive() and reborn)
         {
             Game::setImageAlpha(image,128);
@@ -136,8 +141,8 @@ public:
             //dead
             Game::setImageAlpha(image,0);
         }
-        Game::drawImage( image, pos.x-crashing_width/2,pos.y-crashing_length/2 );
     }
+
 
     void update()
     {
@@ -224,61 +229,48 @@ class enemy:public sprite_t
 public:
     enemy(const int &a )
     {
-        pos.x=a;
-        pos.y=0;
+        pos=PointD(a,0) ;
         image=imageEnemy;
         Game::getImageSize(image,width,length);
-        width*=0.7;
-        length*=0.7;
-        life=5;
         crashing_length=length;
         crashing_width=width;
+        life=5;
+        width*=0.7;
         velocity=PointD(0,2);
     }
-    void draw()
-    {
-        Game::drawImage(image,pos.x-width/2,pos.y-length/2,1,1,180);
-    }
+
     std::vector<fire> shootings;
 
 };
 class bullet:public sprite_t
 {
 public:
-    bullet(const int &a,const int &b,const int & i)
+    template<class T>
+    bullet(const T a,const int & i)
     {
-        pos.x=a;
-        pos.y=b;
+        pos=a.pos;
         velocity.x=0;
-        velocity.y=5;
+        velocity.y=(i==0?8:4);
         image=(i==0?imagebullet_player:imagebullet_enemy);
         Game::getImageSize(image,width,length);
         crashing_length=length;
         crashing_width=width;
     }
-    void draw()
-    {
-        Game::drawImage(image,pos.x-width/2,pos.y-length/2);
-    }
-
-
 
 };
 class explosion:public sprite_t
 {
 public:
-    explosion(const PointD &a)
+    template<class T>
+    explosion(const T &a)
     {
-        pos=a;
+        pos=a.pos;
         life=default_life;
         image=imageexplosion;
         Game::getImageSize(image,width,length);
+        crashing_length=length;
+        crashing_width=width;
     }
-    void draw()
-    {
-        Game::drawImage(image,pos.x-width/2,pos.y-length/2);
-    }
-
 
 };
 #endif // SPRITE_T_H_INCLUDED

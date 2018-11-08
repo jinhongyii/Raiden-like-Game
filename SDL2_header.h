@@ -13,11 +13,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 
-#include <iostream>
-#include <cstdio>
-#include <cmath>
-#include <algorithm>
-#include <string>
+#include<bits/stdc++.h>
 
 #include "cleanup.h"
 #include "res_path.h"
